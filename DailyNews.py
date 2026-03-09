@@ -13,7 +13,7 @@ supabase_key = st.secrets["SUPABASE_KEY"]
 
 os.environ["OPENAI_API_KEY"] = st.secrets["OPENAI_API_KEY"]
 
-supabase = create_client(url, key)
+supabase = create_client(supabase_url, supabase_key)
 
 async def News_Tool():
     agent = Agent(
@@ -97,6 +97,7 @@ if st.session_state["news"]:
                     st.error(f"Failed to send email: {e}")
         else:
             st.warning("Please fetch the news first.")
+
 
 
 
