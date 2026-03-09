@@ -6,8 +6,14 @@ from openai import OpenAI
 from composio import Composio
 from composio_openai import OpenAIProvider
 from agents import Agent, Runner, WebSearchTool
+from supabase import create_client
+
+supabase_url = st.secrets["SUPABASE_URL"]
+supabase_key = st.secrets["SUPABASE_KEY"]
 
 os.environ["OPENAI_API_KEY"] = st.secrets["OPENAI_API_KEY"]
+
+supabase = create_client(url, key)
 
 async def News_Tool():
     agent = Agent(
@@ -80,12 +86,18 @@ if st.session_state["news"]:
                     result = Email_Tool(st.session_state["news"], email)
                     if result:
                         st.success("Email sent successfully!")
+                        data = {"Email": email}
+
+                        response = supabase.table("UserInformation").insert(data).execute()
+                        response = supabase.table("UserInformation").select("*").execute()
+                        st.write(response.data)
                     else:
                         st.warning("Something went wrong")
                 except Exception as e:
                     st.error(f"Failed to send email: {e}")
         else:
             st.warning("Please fetch the news first.")
+
 
 
 
